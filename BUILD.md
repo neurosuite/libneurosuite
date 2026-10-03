@@ -20,12 +20,10 @@ sudo apt update
 sudo apt install -y \
     build-essential \
     cmake \
+    ninja-build \
     git \
     qt6-base-dev \
-    qt6-webengine-dev \
-    qt6-webview-dev \
-    libxkbcommon-dev \
-    libqt6webenginewidgets6 \
+    qt6-webengine-dev
 ```
 
 ### Verifying Installation
@@ -44,7 +42,7 @@ CMake should be version 3.16 or higher, and Qt should be version 6.x.
 ### 1. Clone the Repository (if not already done)
 
 ```bash
-git clone https://github.com/joschaschmiedt/libneurosuite.git
+git clone https://github.com/neurosuite/libneurosuite.git
 cd libneurosuite
 ```
 
@@ -57,6 +55,13 @@ cmake -B build -S .
 ```
 
 **Optional Build Options:**
+
+- To build without QtWebEngine (the handbook is then shown with QTextBrowser,
+  which needs only `qt6-base-dev`):
+
+    ```bash
+    cmake -B build -S . -DWITH_WEBENGINE=OFF
+    ```
 
 - To build the test binary:
 
@@ -113,9 +118,9 @@ cmake --install build --prefix /path/to/install
 
 After a successful build, you'll find:
 
-- **Library:** `build/src/libneurosuite.so` (shared library)
-- **Headers:** In `src/` subdirectories
-- **CMake package files:** In `build/cmake/`
+- **Library:** `build/src/libneurosuite.so.3` (shared library, SONAME `libneurosuite.so.3`)
+- **Headers:** In `src/` subdirectories (installed to `include/neurosuite`)
+- **CMake package files:** `build/neurosuiteConfig.cmake` (installed to `lib/cmake/neurosuite`)
 
 ## Troubleshooting
 
@@ -148,8 +153,8 @@ sudo cmake --install build
 After installation, you can use libneurosuite in your CMake projects:
 
 ```cmake
-find_package(neurosuite REQUIRED)
-target_link_libraries(your_target PRIVATE neurosuite)
+find_package(neurosuite 3.0 REQUIRED)
+target_link_libraries(your_target PRIVATE neurosuite::neurosuite)
 ```
 
 ## Additional Information
@@ -157,6 +162,6 @@ target_link_libraries(your_target PRIVATE neurosuite)
 - **Project Version:** 3.0.0
 - **Qt Version:** Qt6 (Qt5 is no longer supported)
 - **C++ Standard:** C++17
-- **License:** GNU Public License v2
+- **License:** GNU General Public License v3 or later
 
 For more information, see the [README.md](README.md) file.
