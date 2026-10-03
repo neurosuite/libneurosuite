@@ -3,41 +3,54 @@ Copyright (C) 2012 Klarälvdalens Datakonsult AB, a KDAB Group company, info@kda
 */
 
 #include "qhelpviewer.h"
-#include <QVBoxLayout>
-#include <QWebEngineView>
-#include <QWebEnginePage>
-#include <QDebug>
-#include <QDialogButtonBox>
 #include <QDesktopServices>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
 
-// Custom page class to handle external links
+#ifdef NEUROSUITE_HAVE_WEBENGINE
+#include <QWebEnginePage>
+#include <QWebEngineView>
+
+namespace
+{
+// Keeps navigation inside the handbook in the viewer and hands every
+// other link (http, mailto, ...) to the system browser.
 class QHelpViewerPage : public QWebEnginePage
 {
   public:
-    QHelpViewerPage(QObject* parent = nullptr): QWebEnginePage(parent) {}
+    explicit QHelpViewerPage(QObject* parent = nullptr): QWebEnginePage(parent) {}
 
   protected:
     bool acceptNavigationRequest(const QUrl& url, NavigationType type, bool isMainFrame) override
     {
-        if (type == NavigationTypeLinkClicked)
+        if (type == NavigationTypeLinkClicked && !url.isLocalFile())
         {
-            // Open external links in default browser
             QDesktopServices::openUrl(url);
             return false;
         }
         return QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
     }
 };
+} // namespace
+#else
+#include <QTextBrowser>
+#endif
 
 QHelpViewer::QHelpViewer(QWidget* parent)
     : QDialog(parent)
 {
     setWindowTitle(tr("Handbook"));
     QVBoxLayout* lay = new QVBoxLayout;
-    mView = new QWebEngineView;
 
-    // Use custom page to handle external links
-    mView->setPage(new QHelpViewerPage(mView));
+#ifdef NEUROSUITE_HAVE_WEBENGINE
+    QWebEngineView* view = new QWebEngineView;
+    view->setPage(new QHelpViewerPage(view));
+    mView = view;
+#else
+    QTextBrowser* view = new QTextBrowser;
+    view->setOpenExternalLinks(true);
+    mView = view;
+#endif
 
     lay->addWidget(mView);
 
@@ -45,6 +58,7 @@ QHelpViewer::QHelpViewer(QWidget* parent)
     lay->addWidget(buttonBox);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     setLayout(lay);
+    resize(800, 600);
 }
 
 QHelpViewer::~QHelpViewer()
@@ -53,5 +67,13 @@ QHelpViewer::~QHelpViewer()
 
 void QHelpViewer::setHtml(const QString& filename, const QString& anchor)
 {
-    mView->load(QUrl(filename));
+    QUrl url = QUrl::fromLocalFile(filename);
+    if (!anchor.isEmpty())
+        url.setFragment(anchor);
+
+#ifdef NEUROSUITE_HAVE_WEBENGINE
+    static_cast<QWebEngineView*>(mView)->load(url);
+#else
+    static_cast<QTextBrowser*>(mView)->setSource(url);
+#endif
 }

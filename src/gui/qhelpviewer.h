@@ -8,7 +8,6 @@ Copyright (C) 2012 Klarälvdalens Datakonsult AB, a KDAB Group company, info@kda
 #include <QUrl>
 
 #include "libneurosuite_export.h"
-class QWebEngineView;
 
 class NEUROSUITE_EXPORT QHelpViewer : public QDialog
 {
@@ -19,7 +18,10 @@ class NEUROSUITE_EXPORT QHelpViewer : public QDialog
     void setHtml(const QString& filename, const QString& anchor = QString());
 
   private:
-    QWebEngineView* mView;
+    // Either a QWebEngineView or a QTextBrowser, depending on how the
+    // library was built. Kept as QWidget so the public header does not
+    // depend on QtWebEngine.
+    QWidget* mView;
 };
 
 #endif // QHELPVIEWER_H
