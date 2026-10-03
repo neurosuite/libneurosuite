@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Qt6 6.4 COMPONENTS Widgets PrintSupport)
+if(@WITH_WEBENGINE@)
+    find_dependency(Qt6 6.4 COMPONENTS WebEngineWidgets)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/neurosuiteTargets.cmake")
+
+# Backwards compatible un-namespaced name used by older consumers
+if(NOT TARGET neurosuite)
+    add_library(neurosuite INTERFACE IMPORTED)
+    set_target_properties(neurosuite PROPERTIES INTERFACE_LINK_LIBRARIES neurosuite::neurosuite)
+endif()
+
+check_required_components(neurosuite)

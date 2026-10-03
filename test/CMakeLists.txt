@@ -8,8 +8,5 @@ set(TEST_SOURCE_FILES
 
 add_executable(test_scrollview ${TEST_SOURCE_FILES})
 
-target_link_libraries(test_scrollview Qt6::Widgets)
+target_link_libraries(test_scrollview neurosuite::neurosuite Qt6::Widgets)
 
-install(TARGETS test_scrollview
-        DESTINATION bin
-)

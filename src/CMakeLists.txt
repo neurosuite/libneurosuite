@@ -1,8 +1,6 @@
-###################
+#################
 # Build library #
-###################
-include_directories(gui/page)
-
+#################
 set(SOURCE_FILES
     gui/qrecentfileaction.cpp
     gui/qcolorbutton.cpp
@@ -24,37 +22,57 @@ set(SOURCE_FILES
     shared/utilities.cpp
 )
 
-
-# Add ressource files
 set(RESSOURCE_FILES
     gui/libneurosuite-icons.qrc
     gui/libneurosuite-cursors.qrc
 )
 
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${RESSOURCE_FILES})
+add_library(neurosuite::neurosuite ALIAS ${PROJECT_NAME})
 
-# Run compiler
-add_library (${PROJECT_NAME} SHARED ${SOURCE_FILES})
-set_target_properties(${PROJECT_NAME}
-    PROPERTIES CXX_VISIBILITY_PRESET hidden
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+    AUTORCC ON
+)
+
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE NEUROSUITE_BUILD_NEUROSUITE_LIB QT_USE_QSTRINGBUILDER
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/gui/page
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gui>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gui/page>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/shared>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}>
 )
 
 ################
 # Link library #
 ################
-target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::PrintSupport Qt6::WebEngineWidgets)
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Widgets Qt6::PrintSupport)
+if(WITH_WEBENGINE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::WebEngineWidgets)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE NEUROSUITE_HAVE_WEBENGINE)
+endif()
 
 ###################
 # Install library #
 ###################
-# Group headers in subfolder
-set(INCLUDE_FILE_DESTINATION "include/${PROJECT_NAME}")
-
 install(TARGETS ${PROJECT_NAME}
-        EXPORT LibraryTargets
-        DESTINATION lib
-        INCLUDES DESTINATION ${INCLUDE_FILE_DESTINATION})
+        EXPORT neurosuiteTargets
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
-set (HEADER_FILES
+set(HEADER_FILES
      libneurosuite_export.h
      gui/qrecentfileaction.h
      gui/qcolorbutton.h
@@ -77,4 +95,4 @@ set (HEADER_FILES
 )
 
 install(FILES ${HEADER_FILES}
-        DESTINATION ${INCLUDE_FILE_DESTINATION})
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})

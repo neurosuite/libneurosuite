@@ -1,0 +1,20 @@
+# CPack settings for libneurosuite (DEB on Linux, ZIP elsewhere).
+set(CPACK_PACKAGE_NAME "libneurosuite")
+set(CPACK_PACKAGE_VENDOR "Neurosuite")
+set(CPACK_PACKAGE_CONTACT "Florian Franzen <FlorianFranzen@gmail.com>")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+set(CPACK_PACKAGE_HOMEPAGE_URL "${PROJECT_HOMEPAGE_URL}")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+set(CPACK_SOURCE_IGNORE_FILES "/\\\\.git/;/build.*/;/result")
+
+if(UNIX AND NOT APPLE)
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+    set(CPACK_DEBIAN_PACKAGE_SECTION "science")
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_SUGGESTS "neuroscope, klusters, ndmanager, neurosuite-mime")
+else()
+    set(CPACK_GENERATOR "ZIP")
+endif()
+
+include(CPack)
