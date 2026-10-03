@@ -84,4 +84,7 @@ export(EXPORT neurosuiteTargets
 #######################
 # CPack configuration #
 #######################
-include(cmake/CPackConfig.cmake)
+# Skip when built as part of another project (e.g. NeuroScope bundling the library).
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    include(cmake/CPackConfig.cmake)
+endif()
