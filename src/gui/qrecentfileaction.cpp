@@ -126,7 +126,8 @@ void QRecentFileActionPrivate::removeAction(const QString& file)
     {
         recentFiles.removeAll(file);
     }
-    Q_FOREACH (QAction* action, q->menu()->actions())
+    const QList<QAction*> actions = q->menu()->actions();
+    for (QAction* action : actions)
     {
         if (action->data().toString() == file)
         {
@@ -160,7 +161,8 @@ QRecentFileAction::~QRecentFileAction()
 */
 void QRecentFileAction::clear()
 {
-    Q_FOREACH (QAction* action, menu()->actions())
+    const QList<QAction*> actions = menu()->actions();
+    for (QAction* action : actions)
     {
         if ((action != d->clearAction) && (action != d->noEntriesAction) && (action != d->clearSeparator))
             d->removeAction(action);
@@ -261,7 +263,8 @@ void QRecentFileAction::setRecentFiles(const QStringList& lst)
 QStringList QRecentFileAction::recentFiles() const
 {
     QStringList recentFiles;
-    Q_FOREACH (QAction* action, menu()->actions())
+    const QList<QAction*> actions = menu()->actions();
+    for (QAction* action : actions)
     {
         if ((action != d->clearAction) && (action != d->noEntriesAction) && (action != d->clearSeparator))
         {

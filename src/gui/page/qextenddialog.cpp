@@ -489,7 +489,7 @@ int QExtendDialog::spacingHint()
 
 int QExtendDialog::groupSpacingHint()
 {
-    return QApplication::fontMetrics().lineSpacing();
+    return QFontMetrics(QApplication::font()).lineSpacing();
 }
 
 QString QExtendDialog::makeStandardCaption(const QString& userCaption,
@@ -545,12 +545,6 @@ void QExtendDialog::setPlainCaption(const QString& caption)
     if (QWidget* win = window())
     {
         win->setWindowTitle(caption);
-#if 0
-#ifdef Q_WS_X11
-        NETWinInfo info( QX11Info::display(), win->winId(), QX11Info::appRootWindow(), 0 );
-        info.setName( caption.toUtf8().constData() );
-#endif
-#endif
     }
 }
 
@@ -610,14 +604,6 @@ void QExtendDialog::centerOnScreen(QWidget* widget, int screen)
 {
     if (!widget)
         return;
-#if 0
-#ifdef Q_WS_X11
-  if( !( widget->windowFlags() & Qt::X11BypassWindowManagerHint ) && widget->windowType() != Qt::Popup
-      && NETRootInfo( QX11Info::display(), NET::Supported ).isSupported( NET::WM2FullPlacement )) {
-      return; // the WM can handle placement much better
-  }
-#endif
-#endif
     QRect rect = screenRect(widget, screen);
 
     widget->move(rect.center().x() - widget->width() / 2,

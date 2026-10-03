@@ -40,8 +40,8 @@ void Utilities::createBackup(const QString& path)
 {
     QFile original(path);
     QFile backup(path + "~");
-    original.open(QIODevice::ReadOnly);
-    backup.open(QIODevice::WriteOnly);
+    if (!original.open(QIODevice::ReadOnly) || !backup.open(QIODevice::WriteOnly))
+        return;
     backup.write(original.readAll());
     original.close();
     backup.close();
