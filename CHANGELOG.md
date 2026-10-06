@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Links inside the handbook stay in the viewer; only external links open the browser.
 - Icon and cursor resources are compiled into the library again.
 - Creating a backup no longer writes an empty file when the original cannot be read.
+- Reopening a file no longer adds a duplicate entry to the recent files menu, and adding
+  a file to a full menu no longer crashes (duplicate fix by Robert Moore).
 
 ### Removed
 - Qt4/Qt5 build paths, the QStandardPaths backport, and the DeployQt5,
