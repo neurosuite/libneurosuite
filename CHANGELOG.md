@@ -26,4 +26,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Travis CI and AppVeyor configuration.
 
 Thanks to Joscha Schmiedt for the Qt6 port, to Théotime de Charrin (MOBS team) whose Qt6
-work served as a checklist, and to Jean-Christophe Fillion-Robin for the Qt5 lookup fix.
+work served as a checklist, and to Jean-Christophe Fillion-Robin for proposing the single `find_package` lookup
+that the Qt6 build now uses.
