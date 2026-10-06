@@ -179,12 +179,14 @@ void QRecentFileAction::addRecentFile(const QString& file)
 {
     if (file.isEmpty())
         return;
+    // Reopening a listed file moves it to the top instead of adding a duplicate.
+    d->removeAction(file);
     if (d->maximumFileCount && (menu()->actions().count() >= d->maximumFileCount + 3))
     {
-        QStringList lst = d->recentFiles;
+        QStringList lst = recentFiles();
         lst.prepend(file);
         QStringList newLst;
-        for (int i = 0; i < d->maximumFileCount; ++i)
+        for (int i = 0; i < qMin(d->maximumFileCount, int(lst.size())); ++i)
         {
             newLst.append(lst.at(i));
         }
@@ -254,6 +256,7 @@ void QRecentFileAction::setMaximumFileCount(int maximumRecentFile)
 void QRecentFileAction::setRecentFiles(const QStringList& lst)
 {
     d->recentFiles = lst;
+    d->recentFiles.removeDuplicates();
     d->createRecentMenu();
 }
 
