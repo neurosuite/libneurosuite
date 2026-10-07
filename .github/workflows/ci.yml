@@ -28,7 +28,7 @@ jobs:
             os: windows-latest
             webengine: ON
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install dependencies (Ubuntu)
         if: runner.os == 'Linux'
@@ -81,7 +81,7 @@ jobs:
         if: runner.os == 'Linux' && matrix.webengine == 'ON'
         run: cd build && cpack -G DEB
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: libneurosuite-${{ matrix.os }}-webengine-${{ matrix.webengine }}
           path: |
@@ -94,6 +94,6 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
       - run: nix build -L .#libneurosuite .#libneurosuite-nowebengine
