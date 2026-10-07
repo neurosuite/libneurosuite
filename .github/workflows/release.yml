@@ -34,7 +34,12 @@ jobs:
           (cd build && cpack -G DEB)
       - name: Check the packages install
         run: sudo apt-get install -y ./build/*.deb
-      - run: (cd build && sha256sum *.deb > SHA256SUMS)
+      # GitHub changes "~" in asset names, so the file names use 3.0.0-rc1 instead of the
+      # package version 3.0.0~rc1. Rename before taking the checksums.
+      - run: |
+          cd build
+          for f in *~*.deb; do [ -e "$f" ] && mv "$f" "${f//\~/-}"; done
+          sha256sum *.deb > SHA256SUMS
       - uses: actions/upload-artifact@v7
         with:
           name: deb
