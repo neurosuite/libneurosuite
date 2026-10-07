@@ -74,11 +74,16 @@ if(NEUROSUITE_TOP_LEVEL)
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT dev
     )
 else()
-    # A copy bundled into an application (FetchContent) only installs the library.
+    # A copy bundled into an application (FetchContent) only installs the library,
+    # into NEUROSUITE_BUNDLED_LIBDIR if the application sets it (e.g. the
+    # Frameworks directory of a macOS bundle).
+    if(NOT DEFINED NEUROSUITE_BUNDLED_LIBDIR)
+        set(NEUROSUITE_BUNDLED_LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+    endif()
     install(TARGETS ${PROJECT_NAME}
             EXPORT neurosuiteTargets
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP
+            LIBRARY DESTINATION ${NEUROSUITE_BUNDLED_LIBDIR} NAMELINK_SKIP
     )
 endif()
 
