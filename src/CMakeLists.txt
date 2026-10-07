@@ -65,12 +65,22 @@ endif()
 ###################
 # Install library #
 ###################
-install(TARGETS ${PROJECT_NAME}
-        EXPORT neurosuiteTargets
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
+if(NEUROSUITE_TOP_LEVEL)
+    install(TARGETS ${PROJECT_NAME}
+            EXPORT neurosuiteTargets
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime
+                    NAMELINK_COMPONENT dev
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT dev
+    )
+else()
+    # A copy bundled into an application (FetchContent) only installs the library.
+    install(TARGETS ${PROJECT_NAME}
+            EXPORT neurosuiteTargets
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} NAMELINK_SKIP
+    )
+endif()
 
 set(HEADER_FILES
      libneurosuite_export.h
@@ -94,5 +104,8 @@ set(HEADER_FILES
      shared/zoomwindow.h
 )
 
-install(FILES ${HEADER_FILES}
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+if(NEUROSUITE_TOP_LEVEL)
+    install(FILES ${HEADER_FILES}
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+            COMPONENT dev)
+endif()

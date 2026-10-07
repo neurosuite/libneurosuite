@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The handbook viewer uses QtWebEngine instead of QtWebKit. QtWebEngine is optional
   (`-DWITH_WEBENGINE=OFF` falls back to QTextBrowser).
 - Licence file corrected to GPL-3.0-or-later, matching the source headers.
+- Debian packages are split into `libneurosuite3` (shared library) and `libneurosuite-dev`
+  (headers, CMake package); the applications' packages depend on `libneurosuite3`.
+  A copy bundled into an application through FetchContent installs only the shared library.
 
 ### Fixed
 - Links inside the handbook stay in the viewer; only external links open the browser.

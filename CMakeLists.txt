@@ -23,6 +23,13 @@ option(WITH_TEST
 ###############################
 include(GNUInstallDirs)
 
+# False when an application bundles the library through FetchContent.
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set(NEUROSUITE_TOP_LEVEL ON)
+else()
+    set(NEUROSUITE_TOP_LEVEL OFF)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -66,14 +73,18 @@ write_basic_package_version_file(
     COMPATIBILITY SameMajorVersion
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-              "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-        DESTINATION ${NEUROSUITE_CMAKE_INSTALL_DIR}
-)
-install(EXPORT neurosuiteTargets
-        NAMESPACE neurosuite::
-        DESTINATION ${NEUROSUITE_CMAKE_INSTALL_DIR}
-)
+if(NEUROSUITE_TOP_LEVEL)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+            DESTINATION ${NEUROSUITE_CMAKE_INSTALL_DIR}
+            COMPONENT dev
+    )
+    install(EXPORT neurosuiteTargets
+            NAMESPACE neurosuite::
+            DESTINATION ${NEUROSUITE_CMAKE_INSTALL_DIR}
+            COMPONENT dev
+    )
+endif()
 
 # Also allow use from a build tree / FetchContent
 export(EXPORT neurosuiteTargets
@@ -85,6 +96,6 @@ export(EXPORT neurosuiteTargets
 # CPack configuration #
 #######################
 # Skip when built as part of another project (e.g. NeuroScope bundling the library).
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+if(NEUROSUITE_TOP_LEVEL)
     include(cmake/CPackConfig.cmake)
 endif()
