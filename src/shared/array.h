@@ -51,6 +51,17 @@ class Array
         memcpy(array, source.array, nbRows * nbColumns * sizeof(T));
     }
 
+    // Move constructor: takes over the elements of source, which is left empty.
+    inline Array(Array&& source) noexcept
+        : nbColumns(source.nbColumns),
+          nbRows(source.nbRows),
+          array(source.array)
+    {
+        source.nbColumns = 0;
+        source.nbRows = 0;
+        source.array = NULL;
+    }
+
     inline ~Array()
     {
         delete[] array;
@@ -181,6 +192,22 @@ class Array
                 delete[] array;
             array = new T[nbRows * nbColumns];
             memcpy(array, source.array, nbRows * nbColumns * sizeof(T));
+        }
+        return *this;
+    }
+
+    // Move assignment: takes over the elements of source, which is left empty.
+    inline Array<T>& operator=(Array<T>&& source) noexcept
+    {
+        if (&source != this)
+        {
+            delete[] array;
+            nbColumns = source.nbColumns;
+            nbRows = source.nbRows;
+            array = source.array;
+            source.nbColumns = 0;
+            source.nbRows = 0;
+            source.array = NULL;
         }
         return *this;
     }

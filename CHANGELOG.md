@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [3.0.0] - unreleased
 
+### Added
+- `Array` can be moved, so applications can hand large arrays on without copying them.
+
 ### Changed
 - Ported to Qt 6 (6.4 or newer). Qt4 and Qt5 are no longer supported. Port by Joscha Schmiedt.
 - Requires CMake 3.16 and C++17. Sources reformatted with clang-format.
