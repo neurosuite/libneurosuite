@@ -205,7 +205,7 @@ void QExtendDialogPrivate::init(QExtendDialog* q)
     q->setButtons(QExtendDialog::Ok | QExtendDialog::Cancel);
     q->setDefaultButton(QExtendDialog::Ok);
 
-    q->connect(&mButtonSignalMapper, SIGNAL(mapped(int)), q, SLOT(slotButtonClicked(int)));
+    QObject::connect(&mButtonSignalMapper, &QSignalMapper::mappedInt, q, &QExtendDialog::slotButtonClicked);
 
     q->setPlainCaption(/*KGlobal::caption()*/ QString()); // set appropriate initial window title for case it gets not set later
 }
